@@ -1,0 +1,381 @@
+/* Eduarcade Design System: "Playground Académico" */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+  --font-sans: 'Nunito', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  /* Palette */
+  --bg-main: #FFFDF7;
+  --bg-surface: #FFFFFF;
+  --bg-surface-alt: #F8F6F0;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --border-main: #0F172A;
+  --shadow-color: #0F172A;
+
+  --accent-orange: #FF6B35;
+  --accent-orange-hover: #E8590C;
+  --accent-mint: #2EC4B6;
+  --accent-mint-hover: #00A896;
+  --accent-yellow: #FEF08A;
+  --accent-blue: #38BDF8;
+  --accent-purple: #C084FC;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  --box-shadow: 4px 4px 0px var(--shadow-color);
+  --box-shadow-sm: 2px 2px 0px var(--shadow-color);
+  --box-shadow-lg: 6px 6px 0px var(--shadow-color);
+  --border-width: 2.5px;
+}
+
+html.dark {
+  --bg-main: #0B1120;
+  --bg-surface: #1E293B;
+  --bg-surface-alt: #162032;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --border-main: #334155;
+  --shadow-color: #000000;
+
+  --accent-orange: #FF7A45;
+  --accent-mint: #20C997;
+  --accent-yellow: #FDE047;
+  --accent-blue: #60A5FA;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Sticker Elements & Neo-Brutalist utility classes */
+.sticker-card {
+  background-color: var(--bg-surface);
+  border: var(--border-width) solid var(--border-main);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--box-shadow);
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sticker-card-interactive:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--box-shadow-lg);
+}
+
+.sticker-btn {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--border-main);
+  box-shadow: var(--box-shadow);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+}
+
+.sticker-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--box-shadow-lg);
+}
+
+.sticker-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--box-shadow-sm);
+}
+
+.btn-primary {
+  background-color: var(--accent-orange);
+  color: #FFFFFF;
+}
+.btn-primary:hover {
+  background-color: var(--accent-orange-hover);
+}
+
+.btn-mint {
+  background-color: var(--accent-mint);
+  color: #0F172A;
+}
+.btn-mint:hover {
+  background-color: var(--accent-mint-hover);
+}
+
+.btn-yellow {
+  background-color: var(--accent-yellow);
+  color: #0F172A;
+}
+
+.btn-neutral {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+}
+.btn-neutral:hover {
+  background-color: var(--bg-surface-alt);
+}
+
+.btn-danger {
+  background-color: #EF4444;
+  color: #FFFFFF;
+}
+
+.sticker-input {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  padding: 11px 16px;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: var(--border-width) solid var(--border-main);
+  border-radius: var(--radius-md);
+  box-shadow: var(--box-shadow-sm);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.sticker-input:focus {
+  border-color: var(--accent-orange);
+  box-shadow: 3px 3px 0px var(--accent-orange);
+}
+
+.sticker-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: var(--radius-sm);
+  border: 1.8px solid var(--border-main);
+  background-color: var(--bg-surface-alt);
+  color: var(--text-main);
+}
+
+.mono-stat {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+/* App Layout Grid */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 24px 64px 24px;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 20px 16px 48px 16px;
+  }
+}
+
+/* Floating Game Window */
+.floating-window {
+  position: fixed;
+  background-color: var(--bg-surface);
+  border: 3.5px solid var(--border-main);
+  border-radius: var(--radius-lg);
+  box-shadow: 8px 8px 0px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+  z-index: 1000;
+}
+
+.floating-window.maximized {
+  inset: 12px !important;
+  width: auto !important;
+  height: auto !important;
+  transform: none !important;
+  border-radius: var(--radius-md);
+}
+
+.window-header {
+  background-color: var(--accent-yellow);
+  color: #0F172A;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2.5px solid var(--border-main);
+  cursor: grab;
+}
+
+.window-header:active {
+  cursor: grabbing;
+}
+
+.window-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.win-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 2px solid #0F172A;
+  background-color: #FFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  box-shadow: 1.5px 1.5px 0px #0F172A;
+  transition: transform 0.1s;
+}
+
+.win-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px;
+}
+
+.win-btn.close:hover {
+  background-color: #EF4444;
+  color: #FFF;
+}
+
+.window-body {
+  flex: 1;
+  position: relative;
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: #FFFFFF;
+}
+
+.resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: se-resize;
+  background: linear-gradient(135deg, transparent 50%, var(--border-main) 50%);
+}
+
+/* Minimized Dock bar at bottom */
+.minimized-dock {
+  position: fixed;
+  bottom: 16px;
+  right: 20px;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dock-pill {
+  background-color: var(--accent-mint);
+  color: #0F172A;
+  border: 2.5px solid var(--border-main);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  box-shadow: var(--box-shadow);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: bounceDock 0.3s ease;
+}
+
+@keyframes bounceDock {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Toast Container */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast-item {
+  pointer-events: auto;
+  background-color: var(--bg-surface);
+  border: 2.5px solid var(--border-main);
+  border-radius: var(--radius-md);
+  box-shadow: var(--box-shadow);
+  padding: 12px 18px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideInToast 0.25s ease;
+}
+
+.toast-item.success {
+  border-left: 6px solid #10B981;
+}
+
+.toast-item.error {
+  border-left: 6px solid #EF4444;
+}
+
+.toast-item.info {
+  border-left: 6px solid var(--accent-blue);
+}
+
+@keyframes slideInToast {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}

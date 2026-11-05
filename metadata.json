@@ -1,0 +1,6 @@
+{
+  "name": "Eduarcade",
+  "description": "Plataforma educativa de juegos interactivos con Vue 3 Composition API, Express, JSON Server y ejecutor en ventana flotante.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
