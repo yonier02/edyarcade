@@ -1,67 +1,86 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
+import { useGamesStore } from '../stores/games.js';
 import { useUiStore } from '../stores/ui.js';
 import GameManager from '../components/GameManager.js';
+import UserProfileCard from '../components/UserProfileCard.js';
+import GameStatsSummary from '../components/GameStatsSummary.js';
 
 export default {
   name: 'MyGamesView',
   components: {
-    GameManager
+    GameManager,
+    UserProfileCard,
+    GameStatsSummary
   },
   setup() {
     const router = useRouter();
     const authStore = useAuthStore();
+    const gamesStore = useGamesStore();
     const uiStore = useUiStore();
 
     const isAuthenticated = computed(() => authStore.isAuthenticated);
     const currentUser = computed(() => authStore.currentUser);
 
-    // Switch between default demo users to easily test author permissions
+    const myGames = computed(() => {
+      if (!authStore.userId) return [];
+      return gamesStore.gamesByAuthor(authStore.userId);
+    });
+
+    const totalPlaysReceived = computed(() => {
+      return myGames.value.reduce((acc, g) => acc + (g.playsCount || 0), 0);
+    });
+
+    const totalLikesReceived = computed(() => {
+      return myGames.value.reduce((acc, g) => acc + (g.likesCount || 0), 0);
+    });
+
+    const creatorTier = computed(() => {
+      if (currentUser.value?.role === 'profesor' || currentUser.value?.role === 'profesora') {
+        return 'Docente Mentor ⭐';
+      }
+      return myGames.value.length >= 2 ? 'Estudiante Creador 🚀' : 'Estudiante Promesa 🎒';
+    });
+
     const switchUser = async (userKey) => {
       if (userKey === 'sofia') {
         await authStore.login('sofia@eduarcade.com', 'password123');
-        uiStore.notify('Has cambiado de usuario a Prof. Sofía Navarro (Docente)', 'success');
+        uiStore.notify('Has cambiado a Prof. Sofía Navarro (Docente / Química)', 'success');
       } else if (userKey === 'mateo') {
         await authStore.login('mateo@eduarcade.com', 'password123');
-        uiStore.notify('Has cambiado de usuario a Mateo Gómez (Estudiante)', 'success');
+        uiStore.notify('Has cambiado a Mateo Gómez (Estudiante / Matemáticas)', 'success');
       }
     };
 
     return {
       isAuthenticated,
       currentUser,
+      myGames,
+      totalPlaysReceived,
+      totalLikesReceived,
+      creatorTier,
       switchUser
     };
   },
   template: `
     <div class="my-games-page">
       
-      <!-- Top switcher bar for testing multi-user author permissions easily -->
-      <div class="sticker-card" style="padding: 14px 20px; margin-bottom: 24px; background: var(--bg-surface-alt); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 1.1rem;">👥</span>
-          <span style="font-weight: 800; font-size: 0.88rem;">Verificación de Permisos Multi-Usuario:</span>
-        </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <button 
-            @click="switchUser('sofia')" 
-            class="sticker-btn"
-            :class="currentUser?.username === 'sofia_ciencias' ? 'btn-primary' : 'btn-neutral'"
-            style="padding: 6px 12px; font-size: 0.82rem;"
-          >
-            Probar como Prof. Sofía
-          </button>
-          <button 
-            @click="switchUser('mateo')" 
-            class="sticker-btn"
-            :class="currentUser?.username === 'mateo_dev' ? 'btn-primary' : 'btn-neutral'"
-            style="padding: 6px 12px; font-size: 0.82rem;"
-          >
-            Probar como Mateo Gómez
-          </button>
-        </div>
-      </div>
+      <!-- Component 1: UserProfileCard (con conmutador de cuentas demo) -->
+      <user-profile-card 
+        :user="currentUser" 
+        :show-switcher="true"
+        @switch-user="switchUser"
+      />
+
+      <!-- Component 2: GameStatsSummary (Tarjetas de métricas del creador) -->
+      <game-stats-summary 
+        v-if="isAuthenticated"
+        :total-created="myGames.length"
+        :total-plays="totalPlaysReceived"
+        :total-likes="totalLikesReceived"
+        :creator-tier="creatorTier"
+      />
 
       <!-- If not authenticated -->
       <div v-if="!isAuthenticated" class="sticker-card" style="padding: 48px; text-align: center;">
@@ -75,7 +94,7 @@ export default {
         </router-link>
       </div>
 
-      <!-- Embedded GameManager Component -->
+      <!-- Component 3: GameManager (Lista con edición, borrado y validación de autor) -->
       <game-manager v-else />
 
     </div>

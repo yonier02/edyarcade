@@ -3,12 +3,14 @@ import { useGamesStore } from '../stores/games.js';
 import { useUiStore } from '../stores/ui.js';
 import SearchBar from '../components/SearchBar.js';
 import GameLibrary from '../components/GameLibrary.js';
+import LearningTipsCard from '../components/LearningTipsCard.js';
 
 export default {
   name: 'LibraryView',
   components: {
     SearchBar,
-    GameLibrary
+    GameLibrary,
+    LearningTipsCard
   },
   setup() {
     const gamesStore = useGamesStore();
@@ -67,14 +69,18 @@ export default {
   },
   template: `
     <div class="library-page">
-      <!-- Title Header -->
+      
+      <!-- Header Row -->
       <div style="margin-bottom: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px;">
         <div>
-          <h1 style="font-size: 2rem; font-weight: 900; color: var(--text-main); margin-bottom: 6px;">
+          <span class="sticker-badge" style="background: var(--accent-orange); color: #FFF; margin-bottom: 6px;">
+            CATÁLOGO COMPLETO
+          </span>
+          <h1 style="font-size: 2.1rem; font-weight: 900; color: var(--text-main); margin-bottom: 4px;">
             Biblioteca de Retos Educativos
           </h1>
           <p style="color: var(--text-muted); font-size: 0.95rem;">
-            Explora y filtra videojuegos por materia curricular, conceptos clave o palabras de búsqueda.
+            Filtra en tiempo real por materia, conceptos clave o etiquetas curriculares.
           </p>
         </div>
 
@@ -90,7 +96,7 @@ export default {
         </div>
       </div>
 
-      <!-- Functional Real-time SearchBar with custom v-model -->
+      <!-- Component 1: SearchBar (custom v-model) -->
       <search-bar 
         v-model="searchQuery" 
         v-model:selected-category="selectedCategory"
@@ -100,12 +106,18 @@ export default {
         @clear="clearFilters"
       />
 
-      <!-- Library of Games organized by category one by one -->
+      <!-- Component 2: LearningTipsCard as banner -->
+      <div style="margin-bottom: 28px;">
+        <learning-tips-card />
+      </div>
+
+      <!-- Component 3: GameLibrary (grouped by category one by one) -->
       <game-library 
         :games="filteredGames" 
         @play="onPlay" 
         @tag-click="onTagClick" 
       />
+
     </div>
   `
 };

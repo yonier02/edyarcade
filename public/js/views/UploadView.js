@@ -3,9 +3,15 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
 import { useGamesStore } from '../stores/games.js';
 import { useUiStore } from '../stores/ui.js';
+import SandboxCodeTester from '../components/SandboxCodeTester.js';
+import LearningTipsCard from '../components/LearningTipsCard.js';
 
 export default {
   name: 'UploadView',
+  components: {
+    SandboxCodeTester,
+    LearningTipsCard
+  },
   setup() {
     const router = useRouter();
     const authStore = useAuthStore();
@@ -26,7 +32,7 @@ export default {
 
     // Code editor / file upload mode
     const inputMode = ref('files'); // 'files' | 'editor'
-    const activeTab = ref('html'); // 'html' | 'css' | 'js' | 'preview'
+    const activeTab = ref('html'); // 'html' | 'css' | 'js'
     const rawHtml = ref('<h2>¡Mi Nuevo Reto Educativo!</h2>\n<p>Haz clic en el botón para responder:</p>\n<button id="myBtn" class="game-btn">Comenzar</button>\n<div id="output"></div>');
     const rawCss = ref('body { font-family: "Nunito", sans-serif; text-align: center; padding: 20px; background: #FFFDF7; color: #0F172A; }\n.game-btn { background: #FF6B35; color: #FFF; padding: 12px 24px; font-size: 1rem; font-weight: 800; border: 3px solid #0F172A; border-radius: 8px; box-shadow: 3px 3px 0px #0F172A; cursor: pointer; }\n.game-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #0F172A; }\n#output { margin-top: 16px; font-weight: 800; font-size: 1.1rem; color: #00A896; }');
     const rawJs = ref('document.getElementById("myBtn").addEventListener("click", () => {\n  document.getElementById("output").textContent = "🎉 ¡Excelente trabajo! Reto completado con éxito.";\n});');
@@ -45,13 +51,12 @@ export default {
       'Tecnología'
     ];
 
-    // Combine HTML, CSS and JS into unified standalone document
+    // Consolidated standalone HTML
     const consolidatedCode = computed(() => {
       let html = rawHtml.value.trim();
       let css = rawCss.value.trim();
       let js = rawJs.value.trim();
 
-      // If user provided a full <!DOCTYPE html> document, inject CSS and JS into head and body
       if (html.toLowerCase().includes('<!doctype') || html.toLowerCase().includes('<html')) {
         if (css && !html.includes(css)) {
           html = html.replace('</head>', `<style>\n${css}\n</style>\n</head>`);
@@ -62,7 +67,6 @@ export default {
         return html;
       }
 
-      // Otherwise build standard boilerplate
       return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -83,7 +87,6 @@ export default {
 </html>`;
     });
 
-    // Handle files upload (HTML, CSS, JS single or multiple files)
     const handleFilesChosen = async (event) => {
       const files = Array.from(event.target.files);
       if (!files || files.length === 0) return;
@@ -108,7 +111,6 @@ export default {
       uiStore.notify(`Se procesaron ${files.length} archivos y se combinaron exitosamente.`, 'success');
     };
 
-    // Handle Cover Image Upload with multer
     const handleCoverUpload = async (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -135,7 +137,16 @@ export default {
       }
     };
 
-    // Test run in Floating Window
+    const onLoadTemplate = (tpl) => {
+      title.value = tpl.title;
+      category.value = tpl.category;
+      rawHtml.value = tpl.html;
+      rawCss.value = tpl.css;
+      rawJs.value = tpl.js;
+      inputMode.value = 'editor';
+      uiStore.notify(`¡Plantilla "${tpl.name}" cargada en el editor!`, 'success');
+    };
+
     const testRunGame = () => {
       const previewGame = {
         id: 'preview-' + Date.now(),
@@ -146,7 +157,6 @@ export default {
       uiStore.openGame(previewGame);
     };
 
-    // Publish Game
     const publishGame = async () => {
       if (!isAuthenticated.value) {
         uiStore.notify('Debes iniciar sesión para publicar un videojuego', 'error');
@@ -211,6 +221,7 @@ export default {
       consolidatedCode,
       handleFilesChosen,
       handleCoverUpload,
+      onLoadTemplate,
       testRunGame,
       publishGame
     };
@@ -219,7 +230,7 @@ export default {
     <div class="upload-page" style="max-width: 900px; margin: 0 auto;">
       
       <!-- Page Header -->
-      <div style="margin-bottom: 28px;">
+      <div style="margin-bottom: 24px;">
         <span class="sticker-badge" style="background-color: var(--accent-mint); color: #0F172A; margin-bottom: 8px;">
           CREADOR DE CONTENIDO
         </span>
@@ -231,18 +242,26 @@ export default {
         </p>
       </div>
 
+      <!-- Component 1: SandboxCodeTester (Asistente de plantillas de código) -->
+      <sandbox-code-tester @load-template="onLoadTemplate" />
+
+      <!-- Component 2: LearningTipsCard -->
+      <div style="margin-bottom: 24px;">
+        <learning-tips-card />
+      </div>
+
       <!-- Auth warning if not logged in -->
-      <div v-if="!isAuthenticated" class="sticker-card" style="padding: 20px; background-color: var(--accent-yellow); color: #0F172A; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+      <div v-if="!isAuthenticated" class="sticker-card" style="padding: 18px 24px; background-color: var(--accent-yellow); color: #0F172A; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
         <div>
-          <span style="font-weight: 800; font-size: 1rem;">⚠️ Modo Invitado:</span>
-          <p style="font-size: 0.9rem;">Puedes armar y probar tu juego en la ventana flotante, pero necesitas iniciar sesión para guardarlo en la biblioteca comunitaria.</p>
+          <span style="font-weight: 800; font-size: 0.95rem;">⚠️ Modo Invitado:</span>
+          <p style="font-size: 0.88rem;">Puedes probar tu código en la ventana flotante libremente, pero inicia sesión para guardarlo.</p>
         </div>
         <router-link to="/login" class="sticker-btn btn-neutral" style="font-size: 0.85rem;">
           Iniciar Sesión
         </router-link>
       </div>
 
-      <!-- Main Form -->
+      <!-- Component 3: Main Upload Form -->
       <form @submit.prevent="publishGame" class="sticker-card" style="padding: 32px; background-color: var(--bg-surface); display: flex; flex-direction: column; gap: 24px;">
         
         <!-- Section 1: Basic Metadata -->
